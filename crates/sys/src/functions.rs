@@ -823,7 +823,7 @@ pub fn load(path: &std::path::Path) -> &'static libloading::Library {
 
 #[cfg(feature = "libnode")]
 pub unsafe fn get_sym<T>(symbol: &str) -> libloading::Symbol<T> {
-  let lib = LIBNODE.get().expect("libnode must be loaded before using functions");
+  let lib = LIBNODE.get_or_init(|| libloading::os::unix::Library::this().into());
   match unsafe { lib.get(symbol.as_ref()) } {
     Ok(sym) => sym,
     Err(_) => panic!("SymbolNotFound"),
